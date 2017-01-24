@@ -1,0 +1,55 @@
+---
+title: "台北市國民小學洪災分析"
+author: "許sir"
+
+---
+
+```{}
+降雨頻率分析與淹水潛勢是洪災分析重要的資料來源，利用水文分析進行降雨觀測及淹水分析結果，進一步整合社會統計資料，可評估人類社會承受災害的潛在風險。
+
+假設將24小時延時200年重現期降雨的淹水潛勢的深度達50cm以上的區域，定義為「潛在受災區」。
+```
+
+
+## 1.設定所需的函式庫(libraries)
+```{}
+install.packages("rgdal")   #讓R可以認識shp file
+install.packages("sp")
+```
+
+
+
+```{r}
+
+library(rgdal)
+library(sp)
+
+setwd("/media/hsusir/DATA/Rdata Practice/04Spatial/Flood_in_school")  #設定working area
+
+Flood <- readOGR(dsn = ".", layer = "flood50", encoding="big5")
+# dsn = “.“ 是路徑，但因我們已將working area設定完成，所以打.就好
+#dsn 是指路徑
+# layer 是指shp的名稱
+Schools <- readOGR(dsn = ".", layer = "tpecity_school", encoding="big5")
+
+Schools.Flood <- Schools[Flood, ] #把學校落在Flood中的排出來
+```
+
+## 2.疊三個圖層
+```{r}
+plot(Flood, col='cyan')
+plot(Schools, col='gray', pch=20, add=TRUE)
+plot(Schools.Flood, col='red', pch=20, add=TRUE)
+```
+
+```{r}
+nrow(Schools.Flood@data)
+#把36筆排出來
+# 把 Schools.Flood 中計算筆數 (本例有36筆)
+head(Schools.Flood@data, n=36) 
+sum(Schools.Flood@data$STUDENTS)# sum 計算Schools.Flood中學生總數為多少
+```
+
+
+- 台北市共有36個中小學在潛在受災區範圍內，同時可能影響的學生人數共為3722名
+
